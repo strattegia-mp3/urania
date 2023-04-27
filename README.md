@@ -1,12 +1,11 @@
 # Urania, a weather application
-Uma aplicação de clima com a API OpenWeather e JavaScript.
-
+A weather application using the OpenWeather API and ReactJS.
 ----
 
-## Variáveis de ambiente
+## Env Variables
 
-Para o projeto funcionar, crie um arquivo ``.env.local`` na raíz do projeto e adicione a sua API key em uma variável de ambiente VITE:
+To make the project work, create a file called ``.env.local`` in the project root and add your API key to an environment variable named VITE:
 
 ```bash
-VITE_WEATHER_API_KEY="SUA_API_KEY"
+VITE_WEATHER_API_KEY="API_KEY"
 ```
