@@ -1,6 +1,6 @@
 # Urania, a weather application
 A weather application using the OpenWeather API and ReactJS.
-----
+
 
 ## Env Variables
 
