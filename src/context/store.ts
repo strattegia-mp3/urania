@@ -1,21 +1,20 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
+import { shallow } from "zustand/shallow";
 
 export interface Coordinates {
   lat: number;
   lon: number;
-  name?: string; // Nome da cidade para display
+  name?: string;
   country?: string;
 }
 
 interface WeatherState {
-  // Estado
   coords: Coordinates | null;
   units: "metric" | "imperial";
   favorites: Coordinates[];
   lang: "pt" | "en";
 
-  // Ações
   setCoords: (coords: Coordinates | null) => void;
   setUnits: (unit: "metric" | "imperial") => void;
   setLang: (lang: "pt" | "en") => void;
@@ -29,7 +28,7 @@ export const useStore = create<WeatherState>()(
       coords: null,
       units: "metric",
       favorites: [],
-      lang: "pt", // Default
+      lang: "pt",
 
       setCoords: (coords) => set({ coords }),
       setUnits: (units) => set({ units }),
@@ -37,7 +36,6 @@ export const useStore = create<WeatherState>()(
 
       addFavorite: (newFav) =>
         set((state) => {
-          // Evita duplicatas checando lat/lon
           const exists = state.favorites.some(
             (f) => f.lat === newFav.lat && f.lon === newFav.lon,
           );
@@ -47,18 +45,23 @@ export const useStore = create<WeatherState>()(
 
       removeFavorite: (lat, lon) =>
         set((state) => ({
+          // fix: usava AND (&&) mas deve ser OR (||) para filtrar corretamente
           favorites: state.favorites.filter(
-            (f) => f.lat !== lat && f.lon !== lon,
+            (f) => !(f.lat === lat && f.lon === lon),
           ),
         })),
     }),
     {
-      name: "urania-storage", // LocalStorage
+      name: "urania-storage",
+      storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         favorites: state.favorites,
         units: state.units,
-        lang: state.lang, // <--- Persistir língua
+        lang: state.lang,
       }),
     },
   ),
 );
+
+// Re-export shallow para uso nos componentes
+export { shallow };

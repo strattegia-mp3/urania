@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect, useRef } from "react";
 import { GeocodingResult } from "@/types/weather";
 
 const API_KEY = process.env.NEXT_PUBLIC_OPENWEATHER_KEY;
@@ -9,35 +8,46 @@ export const useSearch = () => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<GeocodingResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
-    // Limpa resultados se query for curta
     if (query.length < 3) {
       setResults([]);
       return;
     }
 
-    // Debounce de 500ms
     const timer = setTimeout(async () => {
+      // Cancela fetch anterior se ainda estiver em andamento
+      abortRef.current?.abort();
+      abortRef.current = new AbortController();
+
       setIsLoading(true);
       try {
-        const { data } = await axios.get(GEO_URL, {
-          params: {
-            q: query, // A API aceita "Cidade, País" nativamente aqui
-            limit: 5, // Traz até 5 variações
-            appid: API_KEY,
-          },
+        const params = new URLSearchParams({
+          q: query,
+          limit: "5",
+          appid: API_KEY ?? "",
         });
+        const res = await fetch(`${GEO_URL}?${params}`, {
+          signal: abortRef.current.signal,
+        });
+        if (!res.ok) throw new Error("Geocoding error");
+        const data: GeocodingResult[] = await res.json();
         setResults(data);
-      } catch (error) {
-        console.error("Erro na busca:", error);
-        setResults([]);
+      } catch (error: unknown) {
+        if (error instanceof Error && error.name !== "AbortError") {
+          console.error("Erro na busca:", error);
+          setResults([]);
+        }
       } finally {
         setIsLoading(false);
       }
-    }, 500);
+    }, 450);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      abortRef.current?.abort();
+    };
   }, [query]);
 
   return { query, setQuery, results, isLoading, setResults };

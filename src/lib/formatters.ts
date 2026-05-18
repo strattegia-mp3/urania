@@ -2,66 +2,66 @@ import { format, parseISO } from "date-fns";
 import { ptBR, enUS } from "date-fns/locale";
 import { ForecastItem } from "@/types/weather";
 
-// Interface para o resumo diário
 export interface DailyForecast {
-  date: string; // "2023-10-25"
-  weekday: string; // "Quarta-feira"
-  min: number; // Menor temp do dia
-  max: number; // Maior temp do dia
-  icon: string; // Ícone predominante (pegaremos o do meio dia)
-  pop: number; // Probabilidade de chuva média
+  date: string;
+  weekday: string;
+  min: number;
+  max: number;
+  icon: string;
+  pop: number;
 }
 
-// Mapa de Locales
-const locales = {
-  pt: ptBR,
-  en: enUS,
-};
-
+const locales = { pt: ptBR, en: enUS };
 type LangType = "pt" | "en";
 
-// Formata a hora para o gráfico
-export const formatTime = (dt: number, lang: LangType = "pt"): string => {
-  return format(new Date(dt * 1000), "HH:mm", { locale: locales[lang] });
-};
+export const formatTime = (dt: number, lang: LangType = "pt"): string =>
+  format(new Date(dt * 1000), "HH:mm", { locale: locales[lang] });
 
-// Transforma a lista de 3h em uma lista de dias únicos (Min/Max)
+/**
+ * Agrupa a lista de 3h em dias, descarta o dia atual (sempre parcial)
+ * e retorna exatamente os próximos DAYS_TO_SHOW dias completos.
+ *
+ * A API retorna até 40 slots (5 dias × 8 slots/dia). O dia de hoje
+ * pode ter de 1 a 8 slots dependendo da hora atual, tornando o total
+ * de dias entre 4 e 6. Normalizar garante sempre 5 cards.
+ */
 export const groupForecastByDay = (
   list: ForecastItem[],
   lang: LangType = "pt",
+  daysToShow = 5,
 ): DailyForecast[] => {
+  const todayKey = new Date().toISOString().split("T")[0];
   const dailyMap = new Map<string, DailyForecast>();
 
-  list.forEach((item) => {
-    // Pegamos só o dia
+  for (const item of list) {
     const dateKey = item.dt_txt.split(" ")[0];
-    const current = dailyMap.get(dateKey);
 
+    // Descarta o dia atual — ele é parcial e distorce min/max
+    if (dateKey === todayKey) continue;
+
+    const current = dailyMap.get(dateKey);
     if (!current) {
-      // Se não existe, cria o inicial
       dailyMap.set(dateKey, {
         date: dateKey,
         weekday: format(parseISO(dateKey), "EEEE", { locale: locales[lang] }),
         min: item.main.temp_min,
         max: item.main.temp_max,
-        icon: item.weather[0].icon, // Pega o primeiro ícone disponível
+        icon: item.weather[0].icon,
         pop: item.pop,
       });
     } else {
-      // Se existe, atualiza min/max
       dailyMap.set(dateKey, {
         ...current,
         min: Math.min(current.min, item.main.temp_min),
         max: Math.max(current.max, item.main.temp_max),
-        // Se o item for perto do meio dia (12:00), atualizamos o ícone para ser mais representativo
         icon: item.dt_txt.includes("12:00")
           ? item.weather[0].icon
           : current.icon,
-        pop: Math.max(current.pop, item.pop), // Pega a maior chance de chuva do dia
+        pop: Math.max(current.pop, item.pop),
       });
     }
-  });
+  }
 
-  // Converte o Map de volta para Array e remove o dia atual se estiver incompleto
-  return Array.from(dailyMap.values());
+  // Retorna exatamente daysToShow dias (slice garante o limite superior)
+  return Array.from(dailyMap.values()).slice(0, daysToShow);
 };

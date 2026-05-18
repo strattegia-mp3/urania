@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useStore } from "@/context/store";
 import { toast } from "sonner";
-import axios from "axios";
 import { useTranslation } from "@/hooks/useTranslation";
 
 const API_KEY = process.env.NEXT_PUBLIC_OPENWEATHER_KEY;
@@ -12,11 +11,10 @@ export const useGeoLocation = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const getLocation = () => {
+  const getLocation = useCallback(() => {
     setIsLoading(true);
     setError(null);
 
-    // Verifica suporte do navegador
     if (!navigator.geolocation) {
       const msg = t.geoNotSupported;
       setError(msg);
@@ -25,70 +23,46 @@ export const useGeoLocation = () => {
       return;
     }
 
-    // Feedback visual inicial
     const toastId = toast.loading(t.geoRetrieving);
 
     navigator.geolocation.getCurrentPosition(
       async (position) => {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
+        const { latitude: lat, longitude: lon } = position.coords;
 
         try {
-          // Reverse Geocoding: Transforma Lat/Lon em Nome de Cidade
-          const response = await axios.get(
-            `https://api.openweathermap.org/geo/1.0/reverse`,
-            {
-              params: {
-                lat,
-                lon,
-                limit: 1,
-                appid: API_KEY,
-              },
-            }
+          const params = new URLSearchParams({
+            lat: String(lat),
+            lon: String(lon),
+            limit: "1",
+            appid: API_KEY ?? "",
+          });
+          const res = await fetch(
+            `https://api.openweathermap.org/geo/1.0/reverse?${params}`,
           );
+          const data = res.ok ? await res.json() : [];
 
-          let cityName = t.yourLocation;
-          let countryCode = "";
+          const cityName = data?.[0]?.name ?? t.yourLocation;
+          const countryCode = data?.[0]?.country ?? "";
 
-          if (response.data && response.data.length > 0) {
-            cityName = response.data[0].name;
-            countryCode = response.data[0].country;
-          }
-
-          // Salva no Store
-          setCoords({
-            lat,
-            lon,
-            name: cityName,
-            country: countryCode,
-          });
-
-          // Sucesso
+          setCoords({ lat, lon, name: cityName, country: countryCode });
           toast.success(t.geoSuccess, { id: toastId });
-        } catch (err) {
-          // Fallback se a API de Reverse Geocoding falhar (mas a localização funcionou)
-          console.error("Erro no reverse geocoding:", err);
-          setCoords({
-            lat,
-            lon,
-            name: t.yourLocation,
-            country: "",
-          });
+        } catch {
+          setCoords({ lat, lon, name: t.yourLocation, country: "" });
           toast.success(t.geoSuccess, { id: toastId });
         } finally {
           setIsLoading(false);
         }
       },
       (err) => {
-        // Erro de Permissão ou GPS
         const msg = t.geoPermissionDenied;
         setError(msg);
         toast.error(msg, { id: toastId });
         setIsLoading(false);
         console.error(err);
-      }
+      },
+      { timeout: 10000, maximumAge: 60000 }, // cache GPS por 1 min
     );
-  };
+  }, [setCoords, t]);
 
   return { getLocation, isLoading, error };
 };

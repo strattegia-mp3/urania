@@ -26,7 +26,12 @@ export function FavoritesMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" title={t.favorites} className="cursor-pointer">
+        <Button
+          variant="ghost"
+          size="icon"
+          title={t.favorites}
+          className="cursor-pointer"
+        >
           <div className="relative">
             <Star className="h-[1.2rem] w-[1.2rem]" />
             {/* Badge se tiver favoritos */}
