@@ -154,7 +154,7 @@ export const CitySearch = memo(function CitySearch() {
                 return (
                   <li key={`${city.lat}-${idx}`} role="option">
                     <button
-                      className="w-full text-left px-4 py-3 text-sm hover:bg-accent/50 hover:text-accent-foreground flex items-center justify-between transition-colors border-b border-border/30 last:border-0"
+                      className="w-full text-left px-4 py-3 text-sm hover:bg-accent/50 hover:text-accent-foreground flex items-center justify-between transition-colors border-b border-border/30 last:border-0 cursor-pointer"
                       onClick={() => handleSelectCity(city)}
                     >
                       <div className="flex flex-col min-w-0 mr-2">

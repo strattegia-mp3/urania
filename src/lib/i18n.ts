@@ -19,9 +19,20 @@ export const translations = {
     useLocation: "Usar minha localização",
     favorites: "Favoritos",
     emptyFavorites: "Nenhum favorito salvo",
-    settings: "Configurações", // (Adicionei caso use no futuro)
+    settings: "Configurações",
     theme: "Tema",
     language: "Idioma",
+
+    // === TOGGLE UNIDADES ===
+    switchToImperial: "Mudar para °F",
+    switchToMetric: "Mudar para °C",
+
+    // === AUTO-REFRESH ===
+    lastUpdated: "Atualizado",
+    refreshingNow: "Atualizando...",
+    nextRefresh: "próxima atualização em",
+    minutesAgo: "min atrás",
+    justNow: "agora mesmo",
 
     // === FEEDBACK & ERRORS ===
     loadingSatellites: "Consultando satélites...",
@@ -40,7 +51,7 @@ export const translations = {
     geoSuccess: "Localização encontrada!",
     yourLocation: "Sua Localização",
 
-    // === DASHBOARD: CURRENT CARD (Hero) ===
+    // === DASHBOARD: CURRENT CARD ===
     now: "Agora",
     feelsLike: "Sensação",
     humidity: "Umidade",
@@ -48,11 +59,11 @@ export const translations = {
     pressure: "Pressão",
     visibility: "Visibilidade",
 
-    // === DASHBOARD: FORECAST (Chart & List) ===
+    // === DASHBOARD: FORECAST ===
     forecast24h: "Previsão (24h)",
     nextDays: "Próximos Dias",
 
-    // === DASHBOARD: AIR QUALITY CARD ===
+    // === DASHBOARD: AIR QUALITY ===
     airQuality: "Qualidade do Ar",
     aqiGood: "Boa",
     aqiFair: "Razoável",
@@ -65,24 +76,40 @@ export const translations = {
     aqiDescPoor: "Prejudicial",
     aqiDescVeryPoor: "Perigo à saúde",
 
-    // === DASHBOARD: LOCATION & ASTRO CARD ===
+    // === UV INDEX ===
+    uvIndex: "Índice UV",
+    uvLow: "Baixo",
+    uvModerate: "Moderado",
+    uvHigh: "Alto",
+    uvVeryHigh: "Muito Alto",
+    uvExtreme: "Extremo",
+    uvDescLow: "Sem proteção necessária",
+    uvDescModerate: "Protetor solar recomendado",
+    uvDescHigh: "Use proteção solar",
+    uvDescVeryHigh: "Evite exposição ao sol",
+    uvDescExtreme: "Risco máximo de queimadura",
+
+    // === NEVE ===
+    snow1h: "Neve (1h)",
+    snowDepth: "Cobertura de neve",
+
+    // === DASHBOARD: LOCATION & ASTRO ===
     locationAstro: "Localização & Astro",
     latitude: "Latitude",
     longitude: "Longitude",
     timezone: "Fuso Horário",
     sunrise: "Nascer",
     sunset: "Pôr",
-    // Pontos Cardeais (Usados também no Wind Card)
     dirN: "N",
     dirS: "S",
     dirE: "L",
     dirW: "O",
 
-    // === DASHBOARD: ATMOSPHERIC DETAILS CARD ===
+    // === DASHBOARD: ATMOSPHERIC DETAILS ===
     atmosphericDetails: "Detalhes Atmosféricos",
     groundLevel: "Solo",
     clouds: "Nuvens",
-    rain1h: "Precipitação de Chuva (1h)",
+    rain1h: "Chuva (1h)",
 
     // === DASHBOARD: WIND CARD ===
     windTitle: "Vento & Direção",
@@ -95,6 +122,10 @@ export const translations = {
     layer: "Camada",
     precipitation: "Precipitação",
     temperature: "Temperatura",
+
+    // === NOT FOUND (404) ===
+    notFoundTitle: "Previsão não encontrada",
+    notFoundText: "Parece que essa página se perdeu no vento. O conteúdo que você está procurando não existe ou foi movido.",
   },
 
   en: {
@@ -117,9 +148,20 @@ export const translations = {
     useLocation: "Use my location",
     favorites: "Favorites",
     emptyFavorites: "No favorites saved",
-    settings: "Settings", // (Added just in case)
+    settings: "Settings",
     theme: "Theme",
     language: "Language",
+
+    // === TOGGLE UNIDADES ===
+    switchToImperial: "Switch to °F",
+    switchToMetric: "Switch to °C",
+
+    // === AUTO-REFRESH ===
+    lastUpdated: "Updated",
+    refreshingNow: "Refreshing...",
+    nextRefresh: "next refresh in",
+    minutesAgo: "min ago",
+    justNow: "just now",
 
     // === FEEDBACK & ERRORS ===
     loadingSatellites: "Consulting satellites...",
@@ -138,7 +180,7 @@ export const translations = {
     geoSuccess: "Location found!",
     yourLocation: "Your Location",
 
-    // === DASHBOARD: CURRENT CARD (Hero) ===
+    // === DASHBOARD: CURRENT CARD ===
     now: "Now",
     feelsLike: "Feels Like",
     humidity: "Humidity",
@@ -146,11 +188,11 @@ export const translations = {
     pressure: "Pressure",
     visibility: "Visibility",
 
-    // === DASHBOARD: FORECAST (Chart & List) ===
+    // === DASHBOARD: FORECAST ===
     forecast24h: "Forecast (24h)",
     nextDays: "Next Days",
 
-    // === DASHBOARD: AIR QUALITY CARD ===
+    // === DASHBOARD: AIR QUALITY ===
     airQuality: "Air Quality",
     aqiGood: "Good",
     aqiFair: "Fair",
@@ -163,20 +205,36 @@ export const translations = {
     aqiDescPoor: "Unhealthy",
     aqiDescVeryPoor: "Health hazard",
 
-    // === DASHBOARD: LOCATION & ASTRO CARD ===
+    // === UV INDEX ===
+    uvIndex: "UV Index",
+    uvLow: "Low",
+    uvModerate: "Moderate",
+    uvHigh: "High",
+    uvVeryHigh: "Very High",
+    uvExtreme: "Extreme",
+    uvDescLow: "No protection needed",
+    uvDescModerate: "Sunscreen recommended",
+    uvDescHigh: "Use sun protection",
+    uvDescVeryHigh: "Avoid sun exposure",
+    uvDescExtreme: "Maximum burn risk",
+
+    // === SNOW ===
+    snow1h: "Snow (1h)",
+    snowDepth: "Snow depth",
+
+    // === DASHBOARD: LOCATION & ASTRO ===
     locationAstro: "Location & Astro",
     latitude: "Latitude",
     longitude: "Longitude",
     timezone: "Timezone",
     sunrise: "Sunrise",
     sunset: "Sunset",
-    // Cardinal Points (Also used in Wind Card)
     dirN: "N",
     dirS: "S",
     dirE: "E",
     dirW: "W",
 
-    // === DASHBOARD: ATMOSPHERIC DETAILS CARD ===
+    // === DASHBOARD: ATMOSPHERIC DETAILS ===
     atmosphericDetails: "Atmospheric Details",
     groundLevel: "Ground",
     clouds: "Clouds",
@@ -193,6 +251,10 @@ export const translations = {
     layer: "Layer",
     precipitation: "Precipitation",
     temperature: "Temperature",
+
+    // === NOT FOUND (404) ===
+    notFoundTitle: "Forecast not found",
+    notFoundText: "Looks like this page got lost in the wind. The content you are looking for doesn't exist or has been moved.",
   },
 };
 

@@ -17,6 +17,7 @@ interface WeatherState {
 
   setCoords: (coords: Coordinates | null) => void;
   setUnits: (unit: "metric" | "imperial") => void;
+  toggleUnits: () => void;
   setLang: (lang: "pt" | "en") => void;
   addFavorite: (coords: Coordinates) => void;
   removeFavorite: (lat: number, lon: number) => void;
@@ -32,6 +33,10 @@ export const useStore = create<WeatherState>()(
 
       setCoords: (coords) => set({ coords }),
       setUnits: (units) => set({ units }),
+      toggleUnits: () =>
+        set((state) => ({
+          units: state.units === "metric" ? "imperial" : "metric",
+        })),
       setLang: (lang) => set({ lang }),
 
       addFavorite: (newFav) =>
@@ -45,7 +50,6 @@ export const useStore = create<WeatherState>()(
 
       removeFavorite: (lat, lon) =>
         set((state) => ({
-          // fix: usava AND (&&) mas deve ser OR (||) para filtrar corretamente
           favorites: state.favorites.filter(
             (f) => !(f.lat === lat && f.lon === lon),
           ),
@@ -63,5 +67,4 @@ export const useStore = create<WeatherState>()(
   ),
 );
 
-// Re-export shallow para uso nos componentes
 export { shallow };

@@ -12,7 +12,6 @@ async function fetchWeather(
   lang: string,
 ): Promise<WeatherData> {
   const apiLang = lang === "pt" ? "pt_br" : "en";
-  const base = `${BASE_URL}`;
 
   const params = new URLSearchParams({
     lat: String(lat),
@@ -28,23 +27,33 @@ async function fetchWeather(
     appid: API_KEY ?? "",
   });
 
-  const [currentRes, forecastRes, pollutionRes] = await Promise.all([
-    fetch(`${base}/weather?${params}`),
-    fetch(`${base}/forecast?${params}`),
-    fetch(`${base}/air_pollution?${pollutionParams}`),
+  // UV Index — endpoint legado ainda gratuito no plano Free
+  const uvParams = new URLSearchParams({
+    lat: String(lat),
+    lon: String(lon),
+    appid: API_KEY ?? "",
+  });
+
+  const [currentRes, forecastRes, pollutionRes, uvRes] = await Promise.all([
+    fetch(`${BASE_URL}/weather?${params}`),
+    fetch(`${BASE_URL}/forecast?${params}`),
+    fetch(`${BASE_URL}/air_pollution?${pollutionParams}`),
+    fetch(`${BASE_URL}/uvi?${uvParams}`),
   ]);
 
   if (!currentRes.ok || !forecastRes.ok || !pollutionRes.ok) {
     throw new Error("Falha ao buscar dados meteorológicos");
   }
 
-  const [current, forecast, pollution] = await Promise.all([
+  const [current, forecast, pollution, uv] = await Promise.all([
     currentRes.json(),
     forecastRes.json(),
     pollutionRes.json(),
+    // UV pode falhar silenciosamente — retorna 0 como fallback
+    uvRes.ok ? uvRes.json() : Promise.resolve({ value: 0 }),
   ]);
 
-  return { current, forecast, pollution };
+  return { current, forecast, pollution, uv };
 }
 
 export const useWeather = () => {
@@ -54,9 +63,13 @@ export const useWeather = () => {
     queryKey: ["weather", coords?.lat, coords?.lon, units, lang],
     queryFn: () => fetchWeather(coords!.lat, coords!.lon, units, lang),
     enabled: !!coords?.lat && !!coords?.lon,
-    staleTime: 1000 * 60 * 5, // 5 minutos de cache
-    gcTime: 1000 * 60 * 10, // 10 minutos no garbage collector
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 10,
     refetchOnWindowFocus: false,
+    // Auto-refresh silencioso a cada 10 minutos
+    refetchInterval: 1000 * 60 * 10,
+    // Continua fazendo refresh mesmo com a aba em background
+    refetchIntervalInBackground: false,
     retry: 1,
   });
 };

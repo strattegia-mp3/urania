@@ -1,4 +1,3 @@
-// Tipos Compartilhados
 export interface WeatherCondition {
   id: number;
   main: string;
@@ -33,12 +32,8 @@ export interface MainData {
   grnd_level?: number;
 }
 
-// API Current Weather (/weather)
 export interface CurrentWeatherResponse {
-  coord: {
-    lon: number;
-    lat: number;
-  };
+  coord: { lon: number; lat: number };
   weather: WeatherCondition[];
   base: string;
   main: MainData;
@@ -46,9 +41,7 @@ export interface CurrentWeatherResponse {
   wind: Wind;
   rain?: Rain;
   snow?: Snow;
-  clouds: {
-    all: number;
-  };
+  clouds: { all: number };
   dt: number;
   sys: {
     type?: number;
@@ -63,7 +56,6 @@ export interface CurrentWeatherResponse {
   cod: number;
 }
 
-// API Forecast (/forecast)
 export interface ForecastItem {
   dt: number;
   main: MainData & { temp_kf?: number };
@@ -72,6 +64,8 @@ export interface ForecastItem {
   wind: Wind;
   visibility: number;
   pop: number;
+  rain?: Rain;
+  snow?: Snow;
   sys: { pod: "d" | "n" };
   dt_txt: string;
 }
@@ -93,11 +87,8 @@ export interface ForecastResponse {
   };
 }
 
-// API Air Pollution (/air_pollution)
 export interface AirPollutionItem {
-  main: {
-    aqi: number; // 1 = Good, 2 = Fair, 3 = Moderate, 4 = Poor, 5 = Very Poor
-  };
+  main: { aqi: number };
   components: {
     co: number;
     no: number;
@@ -112,14 +103,19 @@ export interface AirPollutionItem {
 }
 
 export interface AirPollutionResponse {
-  coord: {
-    lon: number;
-    lat: number;
-  };
+  coord: { lon: number; lat: number };
   list: AirPollutionItem[];
 }
 
-// Interface de Geocodificação
+// UV Index (One Call API)
+export interface UVResponse {
+  lat: number;
+  lon: number;
+  date_iso: string;
+  date: number;
+  value: number;
+}
+
 export interface GeocodingResult {
   name: string;
   local_names?: Record<string, string>;
@@ -129,9 +125,9 @@ export interface GeocodingResult {
   state?: string;
 }
 
-// Interface Unificada
 export interface WeatherData {
   current: CurrentWeatherResponse;
   forecast: ForecastResponse;
   pollution: AirPollutionResponse;
+  uv: UVResponse;
 }

@@ -8,7 +8,6 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { useStore } from "@/context/store";
 import { Loader2, AlertCircle } from "lucide-react";
 
-// Lazy load pesados
 const CurrentCard = lazy(() =>
   import("@/components/weather/CurrentCard").then((m) => ({
     default: m.CurrentCard,
@@ -64,9 +63,9 @@ export default function Dashboard() {
 
   if (!coords) {
     return (
-      <div className="min-h-screen bg-background flex flex-col relative">
+      <div className="min-h-[100dvh] bg-background flex flex-col relative overflow-hidden">
         <Header />
-        <main className="flex-1">
+        <main className="flex-1 flex flex-col w-full h-full">
           <HomeView />
         </main>
       </div>
@@ -81,12 +80,12 @@ export default function Dashboard() {
         {isLoading ? (
           <div className="flex h-[70vh] items-center justify-center flex-col gap-4">
             <Loader2 className="h-10 w-10 animate-spin text-primary" />
-            <p className="text-muted-foreground text-sm">
+            <p className="text-muted-foreground text-sm animate-pulse">
               {t.loadingSatellites}
             </p>
           </div>
         ) : error ? (
-          <div className="flex flex-col items-center justify-center h-[50vh] text-destructive gap-3 border border-destructive/20 rounded-2xl bg-destructive/5 p-8">
+          <div className="flex flex-col items-center justify-center h-[50vh] text-destructive gap-3 border border-destructive/20 rounded-2xl bg-destructive/5 p-8 animate-in fade-in zoom-in-95 duration-500">
             <AlertCircle className="w-8 h-8" />
             <p className="font-semibold">{t.connectionError}</p>
             <p className="text-sm text-muted-foreground">{t.checkConnection}</p>
@@ -107,11 +106,11 @@ export default function Dashboard() {
             }
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6 gap-3 md:gap-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
-              <div className="col-span-1 sm:col-span-2 lg:col-span-3 2xl:col-span-4 min-h-[260px] lg:min-h-[300px]">
+              <div className="col-span-1 sm:col-span-2 lg:col-span-3 2xl:col-span-4 min-h-[260px] lg:min-h-[300px] animate-card-enter stagger-1">
                 <CurrentCard data={data.current} city={coords.name} />
               </div>
 
-              <div className="col-span-1 sm:col-span-2 lg:col-span-1 2xl:col-span-2">
+              <div className="col-span-1 sm:col-span-2 lg:col-span-1 2xl:col-span-2 animate-card-enter stagger-2">
                 <LocationAstroCard
                   city={{
                     name: data.forecast.city.name,
@@ -127,7 +126,7 @@ export default function Dashboard() {
                 />
               </div>
 
-              <div className="col-span-1 sm:col-span-2 lg:col-span-2 2xl:col-span-3 min-h-[380px]">
+              <div className="col-span-1 sm:col-span-2 lg:col-span-2 2xl:col-span-3 min-h-[380px] animate-card-enter stagger-3">
                 <WeatherMap
                   lat={data.current.coord.lat}
                   lon={data.current.coord.lon}
@@ -135,28 +134,29 @@ export default function Dashboard() {
                 />
               </div>
 
-              <div className="col-span-1 sm:col-span-2 lg:col-span-2 2xl:col-span-3 min-h-[380px]">
+              <div className="col-span-1 sm:col-span-2 lg:col-span-2 2xl:col-span-3 min-h-[380px] animate-card-enter stagger-4">
                 <ForecastChart data={data.forecast.list} />
               </div>
 
-              <div className="col-span-1 sm:col-span-1 lg:col-span-1 2xl:col-span-2">
+              <div className="col-span-1 sm:col-span-1 lg:col-span-1 2xl:col-span-2 animate-card-enter stagger-5">
                 <WindCard wind={data.current.wind} />
               </div>
 
-              <div className="col-span-1 sm:col-span-1 lg:col-span-2 2xl:col-span-2">
+              <div className="col-span-1 sm:col-span-1 lg:col-span-2 2xl:col-span-2 animate-card-enter stagger-6">
                 <WeatherDetails
                   main={data.current.main}
                   visibility={data.current.visibility}
                   clouds={data.current.clouds}
                   rain={data.current.rain}
+                  snow={data.current.snow}
                 />
               </div>
 
-              <div className="col-span-1 sm:col-span-2 lg:col-span-1 2xl:col-span-2">
-                <AirPollutionCard data={data.pollution} />
+              <div className="col-span-1 sm:col-span-2 lg:col-span-1 2xl:col-span-2 animate-card-enter stagger-7">
+                <AirPollutionCard data={data.pollution} uv={data.uv} />
               </div>
 
-              <div className="col-span-1 sm:col-span-2 lg:col-span-4 2xl:col-span-6">
+              <div className="col-span-1 sm:col-span-2 lg:col-span-4 2xl:col-span-6 animate-card-enter stagger-8">
                 <ForecastList data={data.forecast.list} />
               </div>
             </div>
